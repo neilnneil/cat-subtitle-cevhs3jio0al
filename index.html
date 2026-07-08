@@ -155,8 +155,9 @@
     .save-image {
       display: block;
       width: 100%;
-      max-height: min(58vh, 560px);
       height: auto;
+      aspect-ratio: 291 / 364;
+      object-fit: contain;
       border-radius: 8px;
       box-shadow: 0 16px 38px rgba(35, 32, 29, 0.18);
       background: #fff;
@@ -193,7 +194,6 @@
       }
       .actions { gap: 8px; }
       .actions button { flex-basis: 100%; }
-      .save-image { max-height: 48vh; }
     }
   </style>
 </head>
@@ -213,7 +213,7 @@
         </div>
         <div>
           <label for="bottomGap">&#24213;&#37096;&#36317;&#38626;</label>
-          <input id="bottomGap" type="range" min="12" max="80" value="26">
+          <input id="bottomGap" type="range" min="12" max="300" value="26">
           <div id="bottomGapValue" class="value">26 px</div>
         </div>
       </div>
