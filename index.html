@@ -147,15 +147,33 @@
       background: var(--canvas-bg);
     }
 
-    canvas {
-      display: block;
+    .save-card {
       width: 100%;
       max-width: min(100%, 520px);
+    }
+
+    .save-image {
+      display: block;
+      width: 100%;
       max-height: min(58vh, 560px);
       height: auto;
       border-radius: 8px;
       box-shadow: 0 16px 38px rgba(35, 32, 29, 0.18);
       background: #fff;
+      -webkit-touch-callout: default;
+      user-select: none;
+    }
+
+    canvas {
+      display: none;
+    }
+
+    .save-hint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
     }
 
     @media (max-width: 820px) {
@@ -169,19 +187,13 @@
       h1 { font-size: 22px; }
       textarea { min-height: 96px; }
       .tools { padding: 12px; }
-      .preview-area {
-        order: -1;
-        position: sticky;
-        top: 8px;
-        z-index: 2;
-      }
       .control-grid {
         grid-template-columns: 1fr;
         gap: 8px;
       }
       .actions { gap: 8px; }
       .actions button { flex-basis: 100%; }
-      canvas { max-height: 48vh; }
+      .save-image { max-height: 48vh; }
     }
   </style>
 </head>
@@ -226,7 +238,11 @@
     </section>
 
     <section class="preview-area">
-      <canvas id="preview" width="291" height="364"></canvas>
+      <div class="save-card">
+        <img id="saveImage" class="save-image" alt="cat subtitle preview" draggable="false">
+        <canvas id="preview" width="291" height="364"></canvas>
+        <p id="saveHint" class="save-hint">&#25163;&#27231;&#21487;&#38263;&#25353;&#22294;&#29255;&#65292;&#36984;&#25799;&#20786;&#23384;&#22294;&#29255;&#25110;&#21152;&#20837;&#29031;&#29255;&#12290;</p>
+      </div>
     </section>
   </main>
 
@@ -239,6 +255,8 @@
     const maxWidthEl = document.getElementById("maxWidth");
     const downloadBtn = document.getElementById("downloadBtn");
     const resetBtn = document.getElementById("resetBtn");
+    const saveImage = document.getElementById("saveImage");
+    const saveHint = document.getElementById("saveHint");
     const canvas = document.getElementById("preview");
     const ctx = canvas.getContext("2d");
 
@@ -315,6 +333,12 @@
         ctx.strokeText(line, canvas.width / 2, y);
         ctx.fillText(line, canvas.width / 2, y);
       });
+
+      saveImage.src = canvas.toDataURL("image/png");
+    }
+
+    function prefersTouchSave() {
+      return window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(max-width: 820px)").matches;
     }
 
     image.addEventListener("load", drawSubtitle);
@@ -328,6 +352,12 @@
 
     downloadBtn.addEventListener("click", () => {
       drawSubtitle();
+      if (prefersTouchSave()) {
+        saveHint.textContent = "\u8acb\u9577\u6309\u5716\u7247\uff0c\u9078\u64c7\u5132\u5b58\u5716\u7247\u6216\u52a0\u5165\u7167\u7247\u3002";
+        saveImage.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
       link.download = "cat-subtitle.png";
